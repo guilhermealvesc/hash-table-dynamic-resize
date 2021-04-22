@@ -20,7 +20,7 @@ struct hash {
 
 int keyFold(int chave, int TABLE_SIZE);
 int sondagemLinear(int pos, int i, int TABLE_SIZE);
-Hash* dynamicResize(Hash* ha);
+int dynamicResize(Hash* ha);
 
 //Função para criar a tabela hash dado o tamanho dos tipos
 Hash* criaHash(int TABLE_SIZE, int TAMANHO_TIPO) {
@@ -62,10 +62,10 @@ int insereHash(Hash* ha, int chave, void *dados) {
   if (ha == NULL || ha->qnt == ha->TABLE_SIZE) 
     return 0;
 
-  if(ha->qnt/(float) ha->TABLE_SIZE > LOADFACTOR) {
-    ha = dynamicResize(ha); 
-  }
-  
+  //Se a tabela precisar de ser redimensionada
+  //e o redimensionamento falhar == erro
+  if(ha->qnt/(float) ha->TABLE_SIZE > LOADFACTOR && !dynamicResize(ha)) 
+    return 0;
 
   int i, newPos;
   int pos = keyFold(chave, ha->TABLE_SIZE);
@@ -120,18 +120,31 @@ int sondagemLinear(int pos, int i, int TABLE_SIZE) {
   return ((pos + i) & 0x7FFFFFFF) % TABLE_SIZE;
 }
 
-//Função para redimensionar a tabela
-Hash* dynamicResize(Hash* ha) {
-  if(ha == NULL) return NULL;
-  Hash* newHa = criaHash(ha->TABLE_SIZE * 2, ha->ITEM_SIZE);
-  if(newHa == NULL) return NULL;
-  int i; 
+//Função para redimensionar a tabela com o tamanho dobrado
+int dynamicResize(Hash* ha) {
+  if(ha == NULL) return 0;
+  //Cria tabela com tamanho dobrado
+  int timesTwo = ha->TABLE_SIZE * 2;
+  Item** newHa = (Item**) malloc(timesTwo * sizeof(Item*));
+  if(newHa == NULL) return 0;
+
+  //Passando os ponteiros da tabela anterior para a nova
+  int i, j, pos, newPos; 
   for(i = 0; i < ha->TABLE_SIZE; i++) {
     if(ha->itens[i] != NULL) {
-      if(!insereHash(newHa, ha->itens[i]->key, ha->itens[i]->data)) 
-        return NULL;
+      //Sondagem linear na nova tabela com dobro de tamanho
+      pos = keyFold(ha->itens[i]->key, timesTwo);
+      for(j = 0; j < timesTwo; j++) {
+        newPos = sondagemLinear(pos, j, timesTwo);
+        if(newHa[newPos] == NULL) {
+          newHa[newPos] = ha->itens[i];
+          break;
+        }
+      }
     }
   }
-  liberaHash(ha);
-  return newHa;
+  free(ha->itens);
+  ha->itens = newHa;
+  ha->TABLE_SIZE = timesTwo; 
+  return 1;
 }
