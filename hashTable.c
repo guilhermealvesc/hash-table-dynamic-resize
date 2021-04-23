@@ -54,17 +54,17 @@ void liberaHash(Hash* ha) {
   free(ha->itens);
   free(ha);
   return;
-} 
- 
+}
+
 //FALTA DYNAMIC RESIZING
 //Função para inserir elemento na tabela
 int insereHash(Hash* ha, int chave, void *dados) {
-  if (ha == NULL || ha->qnt == ha->TABLE_SIZE) 
+  if (ha == NULL || ha->qnt == ha->TABLE_SIZE)
     return 0;
 
   //Se a tabela precisar de ser redimensionada
   //e o redimensionamento falhar == erro
-  if(ha->qnt/(float) ha->TABLE_SIZE > LOADFACTOR && !dynamicResize(ha)) 
+  if(ha->qnt/(float) ha->TABLE_SIZE > LOADFACTOR && !dynamicResize(ha))
     return 0;
 
   int i, newPos;
@@ -126,9 +126,17 @@ int dynamicResize(Hash* ha) {
   //Cria tabela com tamanho dobrado
   int timesTwo = ha->TABLE_SIZE * 2;
   Item** newHa = (Item**) malloc(timesTwo * sizeof(Item*));
-  if(newHa == NULL) return 0;  
+  if(newHa == NULL) return 0;
+
+  //inializa newHa com NULL
+
+    for(int i=0; i< timesTwo; i++)
+    {
+        newHa[i]=NULL;
+    }
+
   //Passando os ponteiros da tabela anterior para a nova
-  int i, j, pos, newPos; 
+  int i, j, pos, newPos;
   for(i = 0; i < ha->TABLE_SIZE; i++) {
     if(ha->itens[i] != NULL) {
       //Sondagem linear na nova tabela com dobro de tamanho
@@ -144,6 +152,6 @@ int dynamicResize(Hash* ha) {
   }
   free(ha->itens);
   ha->itens = newHa;
-  ha->TABLE_SIZE = timesTwo; 
+  ha->TABLE_SIZE = timesTwo;
   return 1;
 }
