@@ -10,7 +10,7 @@
 #include "hashTable.h"
 #define QNT_ALUNOS 2287
 #include <ctype.h>
-
+#include <stdlib.h>
 
 //Matricula vai ser passada como chave na tabela hash
 struct aluno
@@ -75,6 +75,9 @@ int main()
 
 
     }while(resposta!='n');
+    free(arq);
+    liberaHash(hashTable);
+
 
 
 
