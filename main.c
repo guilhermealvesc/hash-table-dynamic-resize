@@ -17,7 +17,7 @@ struct aluno {
 };
 
 int main() {
-  Hash* hashTable = criaHash(QNT_ALUNOS + 1, sizeof(struct aluno));
+  Hash* hashTable = criaHash(QNT_ALUNOS, sizeof(struct aluno));
   if(hashTable == NULL) return 0;
 
   FILE* arq = fopen("alunos.txt", "r");
@@ -27,8 +27,8 @@ int main() {
   char nome[50];
   struct aluno al;
   while(1) {
-    fscanf(arq, "%d %s %d %d %d", &mat, nome, notas, notas + 1, notas + 2);
     if(feof(arq)) break;
+    fscanf(arq, "%d %s %d %d %d", &mat, nome, notas, notas + 1, notas + 2);
     strcpy(al.nome, nome);
     al.notas[0] = notas[0];
     al.notas[1] = notas[1];
@@ -40,16 +40,16 @@ int main() {
       break;
     }
   }
-  //Código teste
-  int i;
-  struct aluno ibe; 
-  for(i = 0; i < QNT_ALUNOS + 1; i++) {
-    if(buscaHash(hashTable, i, &ibe)) {
-      printf("Aluno(%d): %s // Notas: %d %d %d\n", i, ibe.nome, ibe.notas[0], ibe.notas[1], ibe.notas[2]);
-    } else {
-      printf("Aluno com matricula %d nao existe!\n", i);
-    }
-  }
+  //
+  // int i;
+  // struct aluno ibe; 
+  // for(i = 0; i < QNT_ALUNOS + 1; i++) {
+  //   if(buscaHash(hashTable, i, &ibe)) {
+  //     printf("Aluno(%d): %s // Notas: %d %d %d\n", i, ibe.nome, ibe.notas[0], ibe.notas[1], ibe.notas[2]);
+  //   } else {
+  //     printf("Aluno com matricula %d nao existe!\n", i);
+  //   }
+  // }
 
   return 0;
 }

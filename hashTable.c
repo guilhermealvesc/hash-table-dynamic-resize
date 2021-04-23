@@ -126,8 +126,7 @@ int dynamicResize(Hash* ha) {
   //Cria tabela com tamanho dobrado
   int timesTwo = ha->TABLE_SIZE * 2;
   Item** newHa = (Item**) malloc(timesTwo * sizeof(Item*));
-  if(newHa == NULL) return 0;
-
+  if(newHa == NULL) return 0;  
   //Passando os ponteiros da tabela anterior para a nova
   int i, j, pos, newPos; 
   for(i = 0; i < ha->TABLE_SIZE; i++) {
