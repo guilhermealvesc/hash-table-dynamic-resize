@@ -128,15 +128,13 @@ int dynamicResize(Hash* ha) {
   Item** newHa = (Item**) malloc(timesTwo * sizeof(Item*));
   if(newHa == NULL) return 0;
 
-  //inializa newHa com NULL
-
-    for(int i=0; i< timesTwo; i++)
-    {
-        newHa[i]=NULL;
-    }
+  int i, j, pos, newPos;
+  //Inializa newHa com NULL
+  for(i = 0; i < timesTwo; i++) {
+    newHa[i] = NULL;
+  }
 
   //Passando os ponteiros da tabela anterior para a nova
-  int i, j, pos, newPos;
   for(i = 0; i < ha->TABLE_SIZE; i++) {
     if(ha->itens[i] != NULL) {
       //Sondagem linear na nova tabela com dobro de tamanho
