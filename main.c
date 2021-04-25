@@ -8,19 +8,17 @@
 #include <stdio.h>
 #include <string.h>
 #include "hashTable.h"
-#define QNT_ALUNOS 2287
+#define QNT_ALUNOS 2287 //Constante para quantidade de alunos
 #include <ctype.h>
 #include <stdlib.h>
 
 //Matricula vai ser passada como chave na tabela hash
-struct aluno
-{
+struct aluno {
   char nome[50];
   int notas[3];
 };
 
-int main()
-{
+int main() {
   Hash *hashTable = criaHash(QNT_ALUNOS, sizeof(struct aluno));
   if (hashTable == NULL)
     return 0;
@@ -32,8 +30,7 @@ int main()
   int mat, notas[3];
   char nome[50];
   struct aluno al;
-  while (1)
-  {
+  while (1) {
     if (feof(arq))
       break;
     fscanf(arq, "%d %s %d %d %d", &mat, nome, notas, notas + 1, notas + 2);
@@ -41,36 +38,28 @@ int main()
     al.notas[0] = notas[0];
     al.notas[1] = notas[1];
     al.notas[2] = notas[2];
-    if (insereHash(hashTable, mat, &al))
-    {
+    if (insereHash(hashTable, mat, &al)) {
       printf("Insercao do aluno %d feita com sucesso!\n", mat);
-    }
-    else
-    {
+    } else {
       printf("Nao e possivel mais inserir na tabela!\n");
       break;
     }
   }
 
   char resposta;
-  do
-  {
+  do {
     printf("\n\nDeseja consultar um aluno na tabela (s,n)? ");
     scanf(" %c", &resposta);
     resposta = tolower(resposta);
-    if (resposta == 's')
-    {
+    if (resposta == 's') {
       printf("Digite a matricula do aluno: ");
-      do
-      {
+      do {
         scanf("%d", &mat);
       } while (mat < 0);
-      if (buscaHash(hashTable, mat, &al))
-      {
+      if (buscaHash(hashTable, mat, &al)) {
         printf("\n\nAluno(%d) -> Nome: \"%s\" | Notas = [%d, %d, %d]\n", mat, al.nome, al.notas[0], al.notas[1], al.notas[2]);
-      }
-      else
-        printf("\n\nO aluno com matricula %d nao existe!", mat);
+      } else
+        printf("\n\nO aluno com matricula %d nao existe!\n", mat);
       // system("pause"); //windows
       setbuf(stdin, NULL); //linux
       int c = getchar(); //linux

@@ -5,14 +5,14 @@
 
 #define LOADFACTOR 0.75 //Fator de tamanho para dynamic resizing
 
-//Item único da tabela
+//Estrutura de um item da tabela
 typedef struct item {
   int key;
-  void* data;
+  void* data; //Void para armazenar tipos genéricos
 } Item;
 
 //Estrutura para tabela hash, variável item size adicionada
-//para ter o tamanho dos itens na memória
+//na estrutura para ter o tamanho dos itens na memória
 struct hash {
   int qnt, TABLE_SIZE, ITEM_SIZE;
   Item **itens;
@@ -47,7 +47,7 @@ void liberaHash(Hash* ha) {
   int i;
   for(i = 0; i < ha->TABLE_SIZE; i++) {
     if(ha->itens[i] != NULL) {
-      free(ha->itens[i]->data);
+      free(ha->itens[i]->data); //Desaloca dado do item da tabela
       free(ha->itens[i]);
     }
   }
@@ -56,7 +56,6 @@ void liberaHash(Hash* ha) {
   return;
 }
 
-//FALTA DYNAMIC RESIZING
 //Função para inserir elemento na tabela
 int insereHash(Hash* ha, int chave, void *dados) {
   if (ha == NULL || ha->qnt == ha->TABLE_SIZE)
@@ -75,11 +74,15 @@ int insereHash(Hash* ha, int chave, void *dados) {
       Item* item = (Item*) malloc(sizeof(Item));
       if(item == NULL) return 0;
       item->key = chave;
+      //Alocando ponteiro genérico do item da tabela 
+      //para tratamento de tipo genérico da tabela
       item->data = (void *) malloc(ha->ITEM_SIZE);
       if(item->data == NULL) {
         free(item);
         return 0;
       }
+      //Copiando dados passados pelo usuário
+      //para o espaço de memória alocado do ponteiro item->data
       memcpy(item->data, dados, ha->ITEM_SIZE);
       ha->itens[newPos] = item;
       ha->qnt++;
@@ -99,6 +102,8 @@ int buscaHash(Hash* ha, int chave, void *dados) {
     if(ha->itens[newPos] == NULL)
       return 0;
     if(ha->itens[newPos]->key == chave) {
+      //Passando os dados na posição calculada pelo hashing da chave
+      //para o ponteiro passado na chamada da função
       memcpy(dados, ha->itens[newPos]->data, ha->ITEM_SIZE);
       return 1;
     }
@@ -123,7 +128,7 @@ int sondagemLinear(int pos, int i, int TABLE_SIZE) {
 //Função para redimensionar a tabela com o tamanho dobrado
 int dynamicResize(Hash* ha) {
   if(ha == NULL) return 0;
-  //Cria tabela com tamanho dobrado
+  //Aloca o vetor de itens da tabela com tamanho dobrado
   int timesTwo = ha->TABLE_SIZE * 2;
   Item** newHa = (Item**) malloc(timesTwo * sizeof(Item*));
   if(newHa == NULL) return 0;
@@ -136,18 +141,25 @@ int dynamicResize(Hash* ha) {
 
   //Passando os ponteiros da tabela anterior para a nova
   for(i = 0; i < ha->TABLE_SIZE; i++) {
+    //Percorre a tabela antiga, procurando por itens
     if(ha->itens[i] != NULL) {
-      //Sondagem linear na nova tabela com dobro de tamanho
+      //Se houver itens na tabela, realiza uma sondagem linear 
+      //na nova tabela com tamanho dobrado
       pos = keyFold(ha->itens[i]->key, timesTwo);
       for(j = 0; j < timesTwo; j++) {
         newPos = sondagemLinear(pos, j, timesTwo);
         if(newHa[newPos] == NULL) {
+          //Se achar um posição válida para inserir o item,
+          //para a sondagem linear
           newHa[newPos] = ha->itens[i];
           break;
         }
       }
     }
   }
+  //Libera o vetor antigo de itens da tabela
+  //pois um novo vetor com tamanho dobrado foi criado
+  //e os itens da tabela antiga foram passados para o novo
   free(ha->itens);
   ha->itens = newHa;
   ha->TABLE_SIZE = timesTwo;
