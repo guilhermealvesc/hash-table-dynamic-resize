@@ -24,6 +24,7 @@ int dynamicResize(Hash* ha);
 
 //Função para criar a tabela hash dado o tamanho dos tipos
 Hash* criaHash(int TABLE_SIZE, int TAMANHO_TIPO) {
+  if(TABLE_SIZE <= 0 || TAMANHO_TIPO <= 0) return NULL;
   Hash* ha = (Hash*) malloc(sizeof(Hash));
   if(ha == NULL) return NULL;
   int i;
@@ -58,7 +59,7 @@ void liberaHash(Hash* ha) {
 
 //Função para inserir elemento na tabela
 int insereHash(Hash* ha, int chave, void *dados) {
-  if (ha == NULL || ha->qnt == ha->TABLE_SIZE)
+  if (ha == NULL || ha->qnt == ha->TABLE_SIZE || dados == NULL)
     return 0;
 
   //Se a tabela precisar de ser redimensionada
@@ -94,7 +95,7 @@ int insereHash(Hash* ha, int chave, void *dados) {
 
 //Função para buscar um elemento em uma tabela hash
 int buscaHash(Hash* ha, int chave, void *dados) {
-  if(ha == NULL) return 0;
+  if(ha == NULL || dados == NULL) return 0;
   int i, newPos;
   int pos = keyFold(chave, ha->TABLE_SIZE);
   for(i = 0; i < ha->TABLE_SIZE; i++) {
