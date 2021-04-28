@@ -52,9 +52,11 @@ int main() {
     scanf(" %c", &resposta);
     resposta = tolower(resposta);
     if (resposta == 's') {
-      printf("Digite a matricula do aluno: ");
+
       do {
+          printf("Digite a matricula do aluno: ");
         scanf("%d", &mat);
+        
       } while (mat < 0);
       if (buscaHash(hashTable, mat, &al)) {
         printf("\n\nAluno(%d) -> Nome: \"%s\" | Notas = [%d, %d, %d]\n", mat, al.nome, al.notas[0], al.notas[1], al.notas[2]);
